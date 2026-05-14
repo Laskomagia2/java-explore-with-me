@@ -6,7 +6,7 @@ import ru.yandex.practicum.model.Hit;
 
 @UtilityClass
 public class HitMapper {
-    public static Hit toHit(EndpointHitDto dto) {
+    public Hit toHit(EndpointHitDto dto) {
         return Hit.builder()
                 .app(dto.getApp())
                 .uri(dto.getUri())
