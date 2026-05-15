@@ -73,7 +73,7 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventFullDto addEvent(Long userId, NewEventDto dto) {
         LocalDateTime eventDate = LocalDateTime.parse(dto.getEventDate(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                FORMATTER);
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Field: eventDate. Error: must be in the future. Value: " + eventDate);
         }
@@ -91,7 +91,8 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventByUserAndId(Long userId, Long eventId) {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
-        return eventMapper.toEventFullDto(event, 0L, 0L);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+        return eventMapper.toEventFullDto(event, confirmedRequests, 0L);
     }
 
     @Override
@@ -118,8 +119,8 @@ public class EventServiceImpl implements EventService {
         }
 
         eventMapper.updateEventFromDto(updateRequest, event, category);
-
-        return eventMapper.toEventFullDto(eventRepository.save(event), 0L, 0L);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+        return eventMapper.toEventFullDto(eventRepository.save(event), confirmedRequests, 0L);
     }
 
     @Override
@@ -156,7 +157,8 @@ public class EventServiceImpl implements EventService {
 
         eventMapper.updateEventFromAdminDto(updateRequest, event, category);
 
-        return eventMapper.toEventFullDto(eventRepository.save(event), 0L, 0L);
+        Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+        return eventMapper.toEventFullDto(eventRepository.save(event), confirmedRequests, 0L);
     }
 
     @Override
@@ -198,8 +200,15 @@ public class EventServiceImpl implements EventService {
                 .setMaxResults(size)
                 .getResultList();
 
+        Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
+        Map<Long, Long> views = getViews(events);
+
         return events.stream()
-                .map(event -> eventMapper.toEventFullDto(event, 0L, 0L))
+                .map(event -> eventMapper.toEventFullDto(
+                        event,
+                        confirmedRequests.getOrDefault(event.getId(), 0L),
+                        views.getOrDefault(event.getId(), 0L)
+                ))
                 .collect(Collectors.toList());
     }
 

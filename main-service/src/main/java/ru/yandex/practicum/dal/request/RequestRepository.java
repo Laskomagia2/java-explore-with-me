@@ -23,8 +23,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByIdIn(List<Long> ids);
 
-    @Query("SELECT r.event.id, COUNT(r.id) " +
-            "FROM Request r " +
+    @Query("SELECT r.event.id, COUNT(r.id) FROM Request r " +
             "WHERE r.event.id IN :eventIds AND r.status = 'CONFIRMED' " +
             "GROUP BY r.event.id")
     List<Object[]> countConfirmedRequestsByEventIds(@Param("eventIds") List<Long> eventIds);
