@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dto.EndpointHitDto;
 import ru.yandex.practicum.dal.StatsRepository;
 import ru.yandex.practicum.dto.ViewStatsDto;
+import ru.yandex.practicum.exception.InvalidRequestParams;
 import ru.yandex.practicum.mapper.HitMapper;
 
 import java.time.LocalDateTime;
@@ -26,8 +27,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        if (start.isAfter(end)) {
-            throw new IllegalArgumentException("Start time must be before end time");
+
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new InvalidRequestParams("End date cannot be before start date");
         }
 
         if (unique) {
