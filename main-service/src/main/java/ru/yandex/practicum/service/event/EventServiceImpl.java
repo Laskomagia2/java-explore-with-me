@@ -46,7 +46,6 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
     private final StatsClient statsClient;
-    private final EventMapper eventMapper;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -61,7 +60,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
 
         return events.stream()
-                .map(event -> eventMapper.toEventShortDto(
+                .map(event -> EventMapper.toEventShortDto(
                         event,
                         confirmedRequests.getOrDefault(event.getId(), 0L),
                         0L
@@ -83,8 +82,8 @@ public class EventServiceImpl implements EventService {
         Category category = categoryRepository.findById(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category with id=" + dto.getCategory() + " was not found"));
 
-        Event event = eventMapper.toEvent(dto, initiator, category);
-        return eventMapper.toEventFullDto(eventRepository.save(event), 0L, 0L);
+        Event event = EventMapper.toEvent(dto, initiator, category);
+        return EventMapper.toEventFullDto(eventRepository.save(event), 0L, 0L);
     }
 
     @Override
@@ -92,7 +91,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
-        return eventMapper.toEventFullDto(event, confirmedRequests, 0L);
+        return EventMapper.toEventFullDto(event, confirmedRequests, 0L);
     }
 
     @Override
@@ -118,9 +117,9 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new NotFoundException("Category not found"));
         }
 
-        eventMapper.updateEventFromDto(updateRequest, event, category);
+        EventMapper.updateEventFromDto(updateRequest, event, category);
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
-        return eventMapper.toEventFullDto(eventRepository.save(event), confirmedRequests, 0L);
+        return EventMapper.toEventFullDto(eventRepository.save(event), confirmedRequests, 0L);
     }
 
     @Override
@@ -155,10 +154,10 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new NotFoundException("Category not found"));
         }
 
-        eventMapper.updateEventFromAdminDto(updateRequest, event, category);
+        EventMapper.updateEventFromAdminDto(updateRequest, event, category);
 
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(event.getId(), RequestStatus.CONFIRMED);
-        return eventMapper.toEventFullDto(eventRepository.save(event), confirmedRequests, 0L);
+        return EventMapper.toEventFullDto(eventRepository.save(event), confirmedRequests, 0L);
     }
 
     @Override
@@ -204,7 +203,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> views = getViews(events);
 
         return events.stream()
-                .map(event -> eventMapper.toEventFullDto(
+                .map(event -> EventMapper.toEventFullDto(
                         event,
                         confirmedRequests.getOrDefault(event.getId(), 0L),
                         views.getOrDefault(event.getId(), 0L)
@@ -269,7 +268,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> views = getViews(events);
 
         List<EventShortDto> eventDtos = events.stream()
-                .map(e -> eventMapper.toEventShortDto(
+                .map(e -> EventMapper.toEventShortDto(
                         e,
                         confirmedRequests.getOrDefault(e.getId(), 0L),
                         views.getOrDefault(e.getId(), 0L)
@@ -307,7 +306,7 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> viewsMap = getViews(List.of(event));
         Long views = viewsMap.getOrDefault(event.getId(), 0L);
 
-        return eventMapper.toEventFullDto(event, confirmedRequests, views);
+        return EventMapper.toEventFullDto(event, confirmedRequests, views);
     }
 
     private Map<Long, Long> getViews(List<Event> events) {

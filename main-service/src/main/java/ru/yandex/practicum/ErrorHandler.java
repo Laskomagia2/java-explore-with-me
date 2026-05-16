@@ -22,7 +22,7 @@ public class ErrorHandler {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
         log.error("404: {}", e.getMessage());
@@ -34,7 +34,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflict(final DataIntegrityViolationException e) {
         log.error("409: {}", e.getMessage());
@@ -46,7 +46,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(final ValidationException e) {
         log.error("400: {}", e.getMessage());
@@ -58,7 +58,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(ConflictException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(final ConflictException e) {
         log.error("409: {}", e.getMessage(), e);
@@ -70,7 +70,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(final MethodArgumentNotValidException e) {
         log.error("400: {}", e.getMessage());
@@ -82,7 +82,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(Throwable.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         log.error("500: {}", e.getMessage(), e);
@@ -94,7 +94,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingParams(MissingServletRequestParameterException e) {
         return ErrorResponse.builder()

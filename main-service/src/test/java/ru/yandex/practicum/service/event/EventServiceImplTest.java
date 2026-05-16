@@ -20,7 +20,6 @@ import ru.yandex.practicum.dto.user.UserShortDto;
 import ru.yandex.practicum.exception.ConflictException;
 import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.exception.ValidationException;
-import ru.yandex.practicum.mapper.event.EventMapper;
 import ru.yandex.practicum.model.Location;
 import ru.yandex.practicum.model.category.Category;
 import ru.yandex.practicum.model.event.Event;
@@ -57,9 +56,6 @@ public class EventServiceImplTest {
 
     @Mock
     private StatsClient statsClient;
-
-    @Mock
-    private EventMapper eventMapper;
 
     @Mock
     private EntityManager entityManager;
@@ -132,7 +128,6 @@ public class EventServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
         when(eventRepository.findAllByInitiatorId(1L, pageable)).thenReturn(List.of(event));
         when(requestRepository.countConfirmedRequestsByEventIds(any())).thenReturn(List.of());
-        when(eventMapper.toEventShortDto(eq(event), anyLong(), anyLong())).thenReturn(eventShortDto);
 
         List<EventShortDto> result = eventService.getEventsByUser(1L, 0, 10);
 
@@ -158,9 +153,7 @@ public class EventServiceImplTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(eventMapper.toEvent(any(), eq(user), eq(category))).thenReturn(event);
         when(eventRepository.save(any())).thenReturn(event);
-        when(eventMapper.toEventFullDto(event, 0L, 0L)).thenReturn(eventFullDto);
 
         EventFullDto result = eventService.addEvent(1L, newEventDto);
 
@@ -214,7 +207,6 @@ public class EventServiceImplTest {
     @Test
     void getEventByUserAndIdTest() {
         when(eventRepository.findByIdAndInitiatorId(1L, 1L)).thenReturn(Optional.of(event));
-        when(eventMapper.toEventFullDto(event, 0L, 0L)).thenReturn(eventFullDto);
 
         EventFullDto result = eventService.getEventByUserAndId(1L, 1L);
 
@@ -238,12 +230,10 @@ public class EventServiceImplTest {
 
         when(eventRepository.findByIdAndInitiatorId(1L, 1L)).thenReturn(Optional.of(event));
         when(eventRepository.save(any())).thenReturn(event);
-        when(eventMapper.toEventFullDto(any(), anyLong(), anyLong())).thenReturn(eventFullDto);
 
         EventFullDto result = eventService.updateEventByUser(1L, 1L, updateRequest);
 
         assertThat(result).isNotNull();
-        verify(eventMapper, times(1)).updateEventFromDto(any(), any(), any());
     }
 
     @Test
@@ -268,12 +258,10 @@ public class EventServiceImplTest {
 
         when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
         when(eventRepository.save(any())).thenReturn(event);
-        when(eventMapper.toEventFullDto(any(), anyLong(), anyLong())).thenReturn(eventFullDto);
 
         EventFullDto result = eventService.updateEventByAdmin(1L, updateRequest);
 
         assertThat(result).isNotNull();
-        verify(eventMapper, times(1)).updateEventFromAdminDto(any(), any(), any());
     }
 
     @Test
@@ -323,7 +311,6 @@ public class EventServiceImplTest {
         when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
         when(requestRepository.countByEventIdAndStatus(1L, RequestStatus.CONFIRMED)).thenReturn(5L);
         when(statsClient.getStats(any(), any(), any(), anyBoolean())).thenReturn(List.of());
-        when(eventMapper.toEventFullDto(eq(event), eq(5L), anyLong())).thenReturn(eventFullDto);
 
         EventFullDto result = eventService.getEventPublicById(1L);
 

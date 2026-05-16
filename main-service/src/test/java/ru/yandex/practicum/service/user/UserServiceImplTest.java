@@ -13,7 +13,6 @@ import ru.yandex.practicum.dal.user.UserRepository;
 import ru.yandex.practicum.dto.user.NewUserRequest;
 import ru.yandex.practicum.dto.user.UserDto;
 import ru.yandex.practicum.exception.NotFoundException;
-import ru.yandex.practicum.mapper.user.UserMapper;
 import ru.yandex.practicum.model.user.User;
 
 import java.util.List;
@@ -29,9 +28,6 @@ public class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private UserMapper userMapper;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -58,7 +54,6 @@ public class UserServiceImplTest {
     void getUsersWithoutIdsTest() {
         Pageable pageable = PageRequest.of(0, 10);
         when(userRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(user)));
-        when(userMapper.toUserDto(user)).thenReturn(userDto);
 
         List<UserDto> result = userService.getUsers(null, 0, 10);
 
@@ -71,7 +66,6 @@ public class UserServiceImplTest {
         List<Long> ids = List.of(1L);
         Pageable pageable = PageRequest.of(0, 10);
         when(userRepository.findAllByIdIn(ids, pageable)).thenReturn(List.of(user));
-        when(userMapper.toUserDto(user)).thenReturn(userDto);
 
         List<UserDto> result = userService.getUsers(ids, 0, 10);
 
@@ -83,7 +77,6 @@ public class UserServiceImplTest {
     void getUsersWithEmptyIdsTest() {
         Pageable pageable = PageRequest.of(0, 10);
         when(userRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(user)));
-        when(userMapper.toUserDto(user)).thenReturn(userDto);
 
         List<UserDto> result = userService.getUsers(List.of(), 0, 10);
 
@@ -97,9 +90,7 @@ public class UserServiceImplTest {
                 .email("user@email.com")
                 .build();
 
-        when(userMapper.toUser(request)).thenReturn(user);
         when(userRepository.save(any())).thenReturn(user);
-        when(userMapper.toUserDto(user)).thenReturn(userDto);
 
         UserDto result = userService.registerUser(request);
 

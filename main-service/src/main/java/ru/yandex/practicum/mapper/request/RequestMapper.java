@@ -1,12 +1,12 @@
 package ru.yandex.practicum.mapper.request;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.dto.request.ParticipationRequestDto;
 import ru.yandex.practicum.model.request.Request;
 
 import java.time.format.DateTimeFormatter;
 
-@Component
+@UtilityClass
 public class RequestMapper {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

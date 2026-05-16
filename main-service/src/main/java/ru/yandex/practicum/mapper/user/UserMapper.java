@@ -1,12 +1,12 @@
 package ru.yandex.practicum.mapper.user;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.dto.user.NewUserRequest;
 import ru.yandex.practicum.dto.user.UserDto;
 import ru.yandex.practicum.dto.user.UserShortDto;
 import ru.yandex.practicum.model.user.User;
 
-@Component
+@UtilityClass
 public class UserMapper {
 
     public User toUser(NewUserRequest request) {

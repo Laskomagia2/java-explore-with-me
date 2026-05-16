@@ -14,7 +14,6 @@ import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.mapper.compilation.CompilationMapper;
 import ru.yandex.practicum.model.compilation.Compilation;
 import ru.yandex.practicum.model.event.Event;
-import ru.yandex.practicum.service.event.EventServiceImpl;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,9 +27,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
-    private final CompilationMapper compilationMapper;
 
-    private final EventServiceImpl eventService;
 
     @Override
     @Transactional
@@ -40,7 +37,7 @@ public class CompilationServiceImpl implements CompilationService {
             events = new HashSet<>(eventRepository.findAllById(dto.getEvents()));
         }
 
-        Compilation compilation = compilationMapper.toEntity(dto, events);
+        Compilation compilation = CompilationMapper.toEntity(dto, events);
         Compilation saved = compilationRepository.save(compilation);
 
         return getCompilation(saved.getId());
@@ -85,7 +82,7 @@ public class CompilationServiceImpl implements CompilationService {
         }
 
         return compilations.stream()
-                .map(compilationMapper::toDto)
+                .map(CompilationMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -94,6 +91,6 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
 
-        return compilationMapper.toDto(compilation);
+        return CompilationMapper.toDto(compilation);
     }
 }

@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
     @Override
     public List<UserDto> getUsers(List<Long> ids, int from, int size) {
@@ -38,16 +37,16 @@ public class UserServiceImpl implements UserService {
         }
 
         return users.stream()
-                .map(userMapper::toUserDto)
+                .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public UserDto registerUser(NewUserRequest request) {
-        User user = userMapper.toUser(request);
+        User user = UserMapper.toUser(request);
         User savedUser = userRepository.save(user);
-        return userMapper.toUserDto(savedUser);
+        return UserMapper.toUserDto(savedUser);
     }
 
     @Override

@@ -15,7 +15,6 @@ import ru.yandex.practicum.dto.category.CategoryDto;
 import ru.yandex.practicum.dto.category.NewCategoryDto;
 import ru.yandex.practicum.exception.ConflictException;
 import ru.yandex.practicum.exception.NotFoundException;
-import ru.yandex.practicum.mapper.category.CategoryMapper;
 import ru.yandex.practicum.model.category.Category;
 
 import java.util.List;
@@ -35,9 +34,6 @@ public class CategoryServiceImplTest {
 
     @Mock
     private EventRepository eventRepository;
-
-    @Mock
-    private CategoryMapper categoryMapper;
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -62,9 +58,7 @@ public class CategoryServiceImplTest {
     void addCategoryTest() {
         NewCategoryDto newCategoryDto = NewCategoryDto.builder().name("category").build();
 
-        when(categoryMapper.toCategory(newCategoryDto)).thenReturn(category);
         when(categoryRepository.save(any())).thenReturn(category);
-        when(categoryMapper.toCategoryDto(category)).thenReturn(categoryDto);
 
         CategoryDto result = categoryService.addCategory(newCategoryDto);
 
@@ -106,7 +100,6 @@ public class CategoryServiceImplTest {
 
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(categoryRepository.save(any())).thenReturn(category);
-        when(categoryMapper.toCategoryDto(any())).thenReturn(CategoryDto.builder().id(1L).name("newName").build());
 
         CategoryDto result = categoryService.updateCategory(1L, updateDto);
 
@@ -126,7 +119,6 @@ public class CategoryServiceImplTest {
     void getCategoriesTest() {
         Pageable pageable = PageRequest.of(0, 10);
         when(categoryRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(category)));
-        when(categoryMapper.toCategoryDto(category)).thenReturn(categoryDto);
 
         List<CategoryDto> result = categoryService.getCategories(0, 10);
 
@@ -137,7 +129,6 @@ public class CategoryServiceImplTest {
     @Test
     void getCategoryTest() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryMapper.toCategoryDto(category)).thenReturn(categoryDto);
 
         CategoryDto result = categoryService.getCategory(1L);
 

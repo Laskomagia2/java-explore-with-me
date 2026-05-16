@@ -14,7 +14,6 @@ import ru.yandex.practicum.dto.request.EventRequestStatusUpdateResult;
 import ru.yandex.practicum.dto.request.ParticipationRequestDto;
 import ru.yandex.practicum.exception.ConflictException;
 import ru.yandex.practicum.exception.NotFoundException;
-import ru.yandex.practicum.mapper.request.RequestMapper;
 import ru.yandex.practicum.model.Location;
 import ru.yandex.practicum.model.category.Category;
 import ru.yandex.practicum.model.event.Event;
@@ -43,9 +42,6 @@ public class RequestServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private RequestMapper requestMapper;
 
     @InjectMocks
     private RequestServiceImpl requestService;
@@ -98,7 +94,6 @@ public class RequestServiceImplTest {
     void getRequestsTest() {
         when(userRepository.existsById(2L)).thenReturn(true);
         when(requestRepository.findAllByRequesterId(2L)).thenReturn(List.of(request));
-        when(requestMapper.toDto(request)).thenReturn(requestDto);
 
         List<ParticipationRequestDto> result = requestService.getRequests(2L);
 
@@ -121,7 +116,6 @@ public class RequestServiceImplTest {
         when(requestRepository.existsByRequesterIdAndEventId(2L, 1L)).thenReturn(false);
         when(requestRepository.countByEventIdAndStatus(1L, RequestStatus.CONFIRMED)).thenReturn(0L);
         when(requestRepository.save(any())).thenReturn(request);
-        when(requestMapper.toDto(request)).thenReturn(requestDto);
 
         ParticipationRequestDto result = requestService.createRequest(2L, 1L);
 
@@ -214,7 +208,6 @@ public class RequestServiceImplTest {
 
         when(requestRepository.findByIdAndRequesterId(1L, 2L)).thenReturn(Optional.of(request));
         when(requestRepository.save(any())).thenReturn(request);
-        when(requestMapper.toDto(any())).thenReturn(canceledDto);
 
         ParticipationRequestDto result = requestService.cancelRequest(2L, 1L);
 
@@ -233,7 +226,6 @@ public class RequestServiceImplTest {
     void getEventRequestsTest() {
         when(eventRepository.existsByIdAndInitiatorId(1L, 1L)).thenReturn(true);
         when(requestRepository.findAllByEventId(1L)).thenReturn(List.of(request));
-        when(requestMapper.toDto(request)).thenReturn(requestDto);
 
         List<ParticipationRequestDto> result = requestService.getEventRequests(1L, 1L);
 
@@ -260,7 +252,6 @@ public class RequestServiceImplTest {
         when(eventRepository.findByIdAndInitiatorId(1L, 1L)).thenReturn(Optional.of(event));
         when(requestRepository.findAllByIdIn(List.of(1L))).thenReturn(List.of(request));
         when(requestRepository.countByEventIdAndStatus(1L, RequestStatus.CONFIRMED)).thenReturn(0L);
-        when(requestMapper.toDto(any())).thenReturn(confirmedDto);
 
         EventRequestStatusUpdateResult result = requestService.updateRequestStatus(1L, 1L, updateRequest);
 
@@ -279,7 +270,6 @@ public class RequestServiceImplTest {
 
         when(eventRepository.findByIdAndInitiatorId(1L, 1L)).thenReturn(Optional.of(event));
         when(requestRepository.findAllByIdIn(List.of(1L))).thenReturn(List.of(request));
-        when(requestMapper.toDto(any())).thenReturn(rejectedDto);
 
         EventRequestStatusUpdateResult result = requestService.updateRequestStatus(1L, 1L, updateRequest);
 

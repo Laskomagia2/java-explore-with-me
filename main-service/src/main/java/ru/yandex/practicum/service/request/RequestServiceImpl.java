@@ -31,7 +31,6 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final RequestMapper requestMapper;
 
     @Override
     public List<ParticipationRequestDto> getRequests(Long userId) {
@@ -39,7 +38,7 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundException("User not found");
         }
         return requestRepository.findAllByRequesterId(userId).stream()
-                .map(requestMapper::toDto)
+                .map(RequestMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -76,7 +75,7 @@ public class RequestServiceImpl implements RequestService {
                 .status(status)
                 .build();
 
-        return requestMapper.toDto(requestRepository.save(request));
+        return RequestMapper.toDto(requestRepository.save(request));
     }
 
     @Override
@@ -85,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
         Request request = requestRepository.findByIdAndRequesterId(requestId, userId)
                 .orElseThrow(() -> new NotFoundException("Request not found"));
         request.setStatus(RequestStatus.CANCELED);
-        return requestMapper.toDto(requestRepository.save(request));
+        return RequestMapper.toDto(requestRepository.save(request));
     }
 
     @Override
@@ -94,7 +93,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Это не ваше событие");
         }
         return requestRepository.findAllByEventId(eventId).stream()
-                .map(requestMapper::toDto)
+                .map(RequestMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -121,7 +120,7 @@ public class RequestServiceImpl implements RequestService {
         if (updateRequest.getStatus().equals("REJECTED")) {
             for (Request r : requests) {
                 r.setStatus(RequestStatus.REJECTED);
-                result.getRejectedRequests().add(requestMapper.toDto(r));
+                result.getRejectedRequests().add(RequestMapper.toDto(r));
             }
         } else {
             long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
@@ -134,11 +133,11 @@ public class RequestServiceImpl implements RequestService {
             for (Request r : requests) {
                 if (limit == 0 || confirmedCount < limit) {
                     r.setStatus(RequestStatus.CONFIRMED);
-                    result.getConfirmedRequests().add(requestMapper.toDto(r));
+                    result.getConfirmedRequests().add(RequestMapper.toDto(r));
                     confirmedCount++;
                 } else {
                     r.setStatus(RequestStatus.REJECTED);
-                    result.getRejectedRequests().add(requestMapper.toDto(r));
+                    result.getRejectedRequests().add(RequestMapper.toDto(r));
                 }
             }
         }

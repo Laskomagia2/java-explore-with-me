@@ -1,7 +1,6 @@
 package ru.yandex.practicum.mapper.event;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.dto.event.*;
 import ru.yandex.practicum.dto.LocationDto;
 import ru.yandex.practicum.mapper.category.CategoryMapper;
@@ -15,12 +14,8 @@ import ru.yandex.practicum.model.user.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Component
-@RequiredArgsConstructor
+@UtilityClass
 public class EventMapper {
-
-    private final UserMapper userMapper;
-    private final CategoryMapper categoryMapper;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Event toEvent(NewEventDto dto, User initiator, Category category) {
@@ -48,12 +43,12 @@ public class EventMapper {
         return EventFullDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
-                .category(categoryMapper.toCategoryDto(event.getCategory()))
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(confirmedRequests)
                 .createdOn(event.getCreatedOn().format(FORMATTER))
                 .description(event.getDescription())
                 .eventDate(event.getEventDate().format(FORMATTER))
-                .initiator(userMapper.toUserShortDto(event.getInitiator()))
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .location(new LocationDto(event.getLocation().getLat(), event.getLocation().getLon()))
                 .paid(event.getPaid())
                 .participantLimit(event.getParticipantLimit())
@@ -71,10 +66,10 @@ public class EventMapper {
         return EventShortDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
-                .category(categoryMapper.toCategoryDto(event.getCategory()))
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(confirmedRequests)
                 .eventDate(event.getEventDate().format(FORMATTER))
-                .initiator(userMapper.toUserShortDto(event.getInitiator()))
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
                 .views(views)

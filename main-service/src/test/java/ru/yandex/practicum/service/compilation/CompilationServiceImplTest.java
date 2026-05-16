@@ -15,7 +15,6 @@ import ru.yandex.practicum.dto.compilation.CompilationDto;
 import ru.yandex.practicum.dto.compilation.NewCompilationDto;
 import ru.yandex.practicum.dto.compilation.UpdateCompilationRequest;
 import ru.yandex.practicum.exception.NotFoundException;
-import ru.yandex.practicum.mapper.compilation.CompilationMapper;
 import ru.yandex.practicum.model.compilation.Compilation;
 import ru.yandex.practicum.service.event.EventServiceImpl;
 
@@ -37,9 +36,6 @@ public class CompilationServiceImplTest {
 
     @Mock
     private EventRepository eventRepository;
-
-    @Mock
-    private CompilationMapper compilationMapper;
 
     @Mock
     private EventServiceImpl eventService;
@@ -73,10 +69,8 @@ public class CompilationServiceImplTest {
         newDto.setTitle("title");
         newDto.setPinned(true);
 
-        when(compilationMapper.toEntity(any(), any())).thenReturn(compilation);
         when(compilationRepository.save(any())).thenReturn(compilation);
         when(compilationRepository.findById(1L)).thenReturn(Optional.of(compilation));
-        when(compilationMapper.toDto(compilation)).thenReturn(compilationDto);
 
         CompilationDto result = compilationService.addCompilation(newDto);
 
@@ -94,10 +88,8 @@ public class CompilationServiceImplTest {
         newDto.setEvents(List.of(1L));
 
         when(eventRepository.findAllById(any())).thenReturn(List.of());
-        when(compilationMapper.toEntity(any(), any())).thenReturn(compilation);
         when(compilationRepository.save(any())).thenReturn(compilation);
         when(compilationRepository.findById(1L)).thenReturn(Optional.of(compilation));
-        when(compilationMapper.toDto(compilation)).thenReturn(compilationDto);
 
         CompilationDto result = compilationService.addCompilation(newDto);
 
@@ -129,9 +121,6 @@ public class CompilationServiceImplTest {
 
         when(compilationRepository.findById(1L)).thenReturn(Optional.of(compilation));
         when(compilationRepository.save(any())).thenReturn(compilation);
-        when(compilationMapper.toDto(compilation)).thenReturn(
-                CompilationDto.builder().id(1L).title("newTitle").pinned(false).events(List.of()).build()
-        );
 
         CompilationDto result = compilationService.updateCompilation(1L, request);
 
@@ -154,7 +143,6 @@ public class CompilationServiceImplTest {
     void getCompilationsWithPinnedTest() {
         Pageable pageable = PageRequest.of(0, 10);
         when(compilationRepository.findAllByPinned(true, pageable)).thenReturn(List.of(compilation));
-        when(compilationMapper.toDto(compilation)).thenReturn(compilationDto);
 
         List<CompilationDto> result = compilationService.getCompilations(true, 0, 10);
 
@@ -166,7 +154,6 @@ public class CompilationServiceImplTest {
     void getCompilationsWithoutPinnedTest() {
         Pageable pageable = PageRequest.of(0, 10);
         when(compilationRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(compilation)));
-        when(compilationMapper.toDto(compilation)).thenReturn(compilationDto);
 
         List<CompilationDto> result = compilationService.getCompilations(null, 0, 10);
 
@@ -176,7 +163,6 @@ public class CompilationServiceImplTest {
     @Test
     void getCompilationTest() {
         when(compilationRepository.findById(1L)).thenReturn(Optional.of(compilation));
-        when(compilationMapper.toDto(compilation)).thenReturn(compilationDto);
 
         CompilationDto result = compilationService.getCompilation(1L);
 

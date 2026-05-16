@@ -1,11 +1,11 @@
 package ru.yandex.practicum.mapper.category;
 
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.dto.category.CategoryDto;
 import ru.yandex.practicum.dto.category.NewCategoryDto;
 import ru.yandex.practicum.model.category.Category;
 
-@Component
+@UtilityClass
 public class CategoryMapper {
 
     public Category toCategory(NewCategoryDto dto) {
