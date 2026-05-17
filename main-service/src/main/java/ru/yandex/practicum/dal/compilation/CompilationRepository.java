@@ -1,0 +1,11 @@
+package ru.yandex.practicum.dal.compilation;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.yandex.practicum.model.compilation.Compilation;
+
+import java.util.List;
+
+public interface CompilationRepository extends JpaRepository<Compilation, Long> {
+    List<Compilation> findAllByPinned(Boolean pinned, Pageable pageable);
+}
