@@ -2,7 +2,6 @@ package ru.yandex.practicum.service.comment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto postCommentByUser(NewCommentDto dto, Long userId, Long eventId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-        if(user.getCommentsBannedUntil() != null && user.getCommentsBannedUntil().isAfter(LocalDateTime.now())) {
+        if (user.getCommentsBannedUntil() != null && user.getCommentsBannedUntil().isAfter(LocalDateTime.now())) {
             throw new NoPermissionException("Вы заблокированы за нарушение правил модерации. Бан истекает: "
                     + user.getCommentsBannedUntil().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
@@ -85,7 +84,7 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getAuthor().getId().equals(userId)) {
             throw new NoPermissionException("Пользователь с id " + userId + " не является автором комментария " + commentId);
         }
-        if(comment.getStatus() != CommentStatus.PUBLISHED) {
+        if (comment.getStatus() != CommentStatus.PUBLISHED) {
             throw new NotFoundException("Комментарий с Id " + commentId + " не найден");
         }
         CommentMapper.updateCommentFromDto(dto, comment);
@@ -134,7 +133,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void validateUser(Long userId) {
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с Id: " + userId + " не найден");
         }
     }
