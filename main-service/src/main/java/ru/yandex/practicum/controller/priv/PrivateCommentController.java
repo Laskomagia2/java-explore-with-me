@@ -1,5 +1,6 @@
 package ru.yandex.practicum.controller.priv;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -19,22 +20,22 @@ public class PrivateCommentController {
     @PostMapping("/events/{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto postComment(@RequestBody @Validated NewCommentDto dto,
-                                  @PathVariable Long userId,
-                                  @PathVariable Long eventId) {
+                                  @PathVariable @Positive Long userId,
+                                  @PathVariable @Positive Long eventId) {
         return commentService.postCommentByUser(dto, userId, eventId);
     }
 
     @PatchMapping("/{commentId}")
     public CommentDto patchComment(@RequestBody @Validated NewCommentDto dto,
-                                  @PathVariable Long userId,
-                                  @PathVariable Long commentId) {
+                                  @PathVariable @Positive Long userId,
+                                  @PathVariable @Positive Long commentId) {
         return commentService.patсhCommentByUser(dto, userId, commentId);
     }
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Long commentId,
-                              @PathVariable Long userId) {
+    public void deleteComment(@PathVariable @Positive Long commentId,
+                              @PathVariable @Positive Long userId) {
         commentService.deleteCommentByUser(commentId, userId);
     }
 

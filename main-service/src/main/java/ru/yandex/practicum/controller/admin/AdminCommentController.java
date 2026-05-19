@@ -1,5 +1,7 @@
 package ru.yandex.practicum.controller.admin;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -25,9 +27,9 @@ public class AdminCommentController {
 
     @GetMapping("/users/{userId}")
     public List<CommentDto> getDeletedUserComments(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable @Positive Long userId,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size) {
         return commentService.getDeletedUserCommentsByAdmin(userId, from, size);
     }
 

@@ -106,13 +106,8 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
 
         User author = comment.getAuthor();
-        long infractionCount = commentRepository.countByAuthorIdAndStatus(author.getId(), CommentStatus.DELETED_BY_ADMIN);
-
-        if (infractionCount >= 3) {
-            author.setCommentsBannedUntil(LocalDateTime.now().plusHours(24));
-            userRepository.save(author);
-            log.debug("Пользователь {} получил бан до {}.", author.getId(), author.getCommentsBannedUntil());
-        }
+        validateAccessToComment(author);
+        userRepository.save(author);
     }
 
     @Override
@@ -135,6 +130,15 @@ public class CommentServiceImpl implements CommentService {
     private void validateUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь с Id: " + userId + " не найден");
+        }
+    }
+
+    private void validateAccessToComment(User author) {
+        long infractionCount = commentRepository.countByAuthorIdAndStatus(author.getId(), CommentStatus.DELETED_BY_ADMIN);
+
+        if (infractionCount >= 3) {
+            author.setCommentsBannedUntil(LocalDateTime.now().plusHours(24));
+            log.debug("Пользователь {} получил бан до {}.", author.getId(), author.getCommentsBannedUntil());
         }
     }
 

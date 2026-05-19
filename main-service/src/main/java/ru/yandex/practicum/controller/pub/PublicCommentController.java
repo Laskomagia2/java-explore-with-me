@@ -1,5 +1,7 @@
 package ru.yandex.practicum.controller.pub;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +20,9 @@ public class PublicCommentController {
 
     @GetMapping
     public List<CommentDto> getComments(
-            @PathVariable Long eventId,
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable @Positive Long eventId,
+            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+            @RequestParam(defaultValue = "10") @Positive int size) {
         return commentService.getCommentsByEventPublic(eventId, from, size);
     }
 
