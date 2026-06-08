@@ -3,6 +3,8 @@ package ru.yandex.practicum.model.user;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -21,5 +23,8 @@ public class User {
 
     @Column(name = "email", nullable = false, unique = true, length = 254)
     private String email;
+
+    @Column(name = "comments_banned_until")
+    private LocalDateTime commentsBannedUntil;
 
 }

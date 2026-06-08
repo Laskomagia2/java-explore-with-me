@@ -8,10 +8,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.exception.ConflictException;
-import ru.yandex.practicum.exception.ErrorResponse;
-import ru.yandex.practicum.exception.NotFoundException;
-import ru.yandex.practicum.exception.ValidationException;
+import ru.yandex.practicum.exception.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -100,6 +97,17 @@ public class ErrorHandler {
         return ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.name())
                 .reason("Incorrectly made request.")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleMissingParams(NoPermissionException e) {
+        return ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.name())
+                .reason("No permission.")
                 .message(e.getMessage())
                 .timestamp(LocalDateTime.now().format(FORMATTER))
                 .build();
